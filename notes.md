@@ -1,8 +1,22 @@
 # Notes
 
+## Next Steps
+
+Battery works, reconnected jank computer cord temporarily, seems safe enough for now.  Need ferrules and a bus.
+
+Need password, might have somebody else's data.  Hard drive is a mess.  Waiting on James to reach out to them.
+
+Then, reimage computer using current clearpath image and instructions.  Then flash firmware.
+
+
+
+
+
+
+
+
 ## Pre-taking apart layout
                                
-
 12V power -[power-cable]-> computer -[ethernet]-> Router 
                         12V power bus -[power-cable]-^
 
