@@ -13,15 +13,16 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     extras_require={
         'test': ['pytest', 'mock']  # Testing dependencies
     },
     zip_safe=True,
-    maintainer='dma',
-    maintainer_email='dma@todo.todo',
-    description='TODO: Package description',
+    maintainer='Ben Cometto',
+    maintainer_email='benjamin@cometto.org',
+    description='Listens to the SICK PicoScan 150 Lidar and publishes the data on a ROS topic',
     license='Apache-2.0',
     entry_points={
         'console_scripts': [

@@ -13,6 +13,11 @@ class LidarDriver(Node):
 
         self.get_logger().info("Starting up")
 
+
+
+        # Parameters
+        # Note these are controlled in the config file not here
+        
         scan_topic = (
             self.declare_parameter("scan_topic","/scan")
             .get_parameter_value()
@@ -26,7 +31,7 @@ class LidarDriver(Node):
         )
 
         driver_period = (
-            self.declare_parameter("driver_freq",0.005)
+            self.declare_parameter("driver_period",0.005)
             .get_parameter_value()
             .double_value
         )
