@@ -44,7 +44,7 @@ class LidarDriver(Node):
         )
 
         hostname = (
-            self.declare_parameter("hostname","192.168.0.111")
+            self.declare_parameter("hostname","192.168.0.202")
             .get_parameter_value()
             .string_value
         )
@@ -145,7 +145,7 @@ class LidarDriver(Node):
 
 
             # Publish
-            # self.get_logger().info(f"LPF Signals: {output} {self.memory}")
+            self.get_logger().info(f"{out_msg}")
             self.publisher.publish(out_msg)
             
 
