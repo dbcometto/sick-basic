@@ -5,8 +5,9 @@
     imu_topic: "/imu" 
     driver_period: 0.005
     lidar_freq: 20.0
-    min_range: 0.05
-    max_range: 45
-    hostname: "192.168.0.202"
+    range_min: 0.05
+    range_max: 45.0
+    hostname: "192.168.0.200"
     scan_port: 2115
     imu_port: 7503
+    frame: "lidar_sensor"

@@ -18,21 +18,21 @@ def generate_launch_description():
     # ld.add_action(follower_list_la)
 
 
-    params_file = "lidar_driver.config.yaml"
+    params_file = "scan_to_3d_projector.config.yaml"
     params = os.path.join(
-        get_package_share_directory('sick_driver'),
+        get_package_share_directory('sick_conversion'),
         "config",
         params_file)
         
-    driver_node = Node(
-            package="sick_driver",
-            executable="lidar_driver",
-            name="lidar_driver",
+    node = Node(
+            package="sick_conversion",
+            executable="scan_to_3d_projector",
+            name="scan_to_3d_projector",
             output="screen",
             parameters=[
                 params
             ],)
-    ld.add_action(driver_node)
+    ld.add_action(node)
 
 
     return ld

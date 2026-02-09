@@ -19,57 +19,63 @@ class LidarDriver(Node):
         # Note these are controlled in the config file not here
         
         scan_topic = (
-            self.declare_parameter("scan_topic","/scan")
+            self.declare_parameter("scan_topic","/incorrect")
             .get_parameter_value()
             .string_value
         )
 
         imu_topic = (
-            self.declare_parameter("imu_topic","/imu")
+            self.declare_parameter("imu_topic","/incorrect")
             .get_parameter_value()
             .string_value
         )
 
         driver_period = (
-            self.declare_parameter("driver_period",0.005)
+            self.declare_parameter("driver_period",0.0)
             .get_parameter_value()
             .double_value
         )
 
         self.lidar_freq = (
-            self.declare_parameter("lidar_freq",20.0)
+            self.declare_parameter("lidar_freq",0.0)
             .get_parameter_value()
             .double_value
         )
 
-        self.min_range = (
-            self.declare_parameter("min_range",0.05)
+        self.range_min = (
+            self.declare_parameter("range_min",0.0)
             .get_parameter_value()
             .double_value
         )
 
-        self.max_range = (
-            self.declare_parameter("max_range",45)
+        self.range_max = (
+            self.declare_parameter("range_max",0.0)
             .get_parameter_value()
             .double_value
         )
 
         hostname = (
-            self.declare_parameter("hostname","192.168.0.202")
+            self.declare_parameter("hostname","0.0.0.0")
             .get_parameter_value()
             .string_value
         )
 
         scan_port = (
-            self.declare_parameter("scan_port",2115)
+            self.declare_parameter("scan_port",0)
             .get_parameter_value()
             .integer_value
         )
 
         imu_port = (
-            self.declare_parameter("imu_port",7503)
+            self.declare_parameter("imu_port",0)
             .get_parameter_value()
             .integer_value
+        )
+
+        self.frame = (
+            self.declare_parameter("frame","no_frame_set")
+            .get_parameter_value()
+            .string_value
         )
 
         
@@ -109,6 +115,8 @@ class LidarDriver(Node):
         except:
             pass
 
+        timestamp = self.get_clock().now().to_msg()
+
         if data:
             # First, strip off overhead and unpack data
             packed_data = data[8:-4]
@@ -128,7 +136,7 @@ class LidarDriver(Node):
 
             thetas = np.frombuffer(scanData[80][17],dtype=np.float32)
             distances = [np.frombuffer(x[17],dtype=np.float32,) for x in scanData[82]]
-            rssis = [np.frombuffer(x[17],dtype=np.float32,) for x in scanData[83]]
+            rssis = [np.frombuffer(x[17],dtype=np.uint16,) for x in scanData[83]]
 
             # self.get_logger().info(f"{type(np.mean(np.abs(np.diff(thetas))))}: {np.mean(np.abs(np.diff(thetas)))}")
 
@@ -136,17 +144,18 @@ class LidarDriver(Node):
             # Create message
             # timestamp = self.get_clock().now().to_msg()
             out_msg = LaserScan()
-            out_msg.header.frame_id = "lidar"
-            out_msg.header.stamp.sec = int(start_time // 1e6)
-            out_msg.header.stamp.nanosec = int(start_time % 1e6)
+            out_msg.header.frame_id = self.frame
+            # out_msg.header.stamp.sec = int(start_time // 1e6)
+            # out_msg.header.stamp.nanosec = int(start_time % 1e6)
+            out_msg.header.stamp = timestamp
 
             out_msg.angle_min = angle_min
             out_msg.angle_max = angle_max
             out_msg.angle_increment = float(np.mean(np.abs(np.diff(thetas))))
-            out_msg.time_increment = (start_time-stop_time)/num_beams/1e6 # from us to s
+            out_msg.time_increment = (stop_time-start_time)/num_beams/1e6 # from us to s
             out_msg.scan_time = 1/self.lidar_freq
-            out_msg.range_min = self.min_range
-            out_msg.range_max = self.max_range
+            out_msg.range_min = self.range_min
+            out_msg.range_max = self.range_max
 
 
             # For laser scan
@@ -190,14 +199,15 @@ class LidarDriver(Node):
             
             # Gather data
             values = [float(x) for x in np.frombuffer(data[3*4:13*4],dtype=np.float32)]
-            timestamp = np.frombuffer(data[13*4:15*4],dtype=np.uint64)[0]
+            #timestamp = np.frombuffer(data[13*4:15*4],dtype=np.uint64)[0]
             
             
             # Create Message
             imu_msg = Imu()
-            imu_msg.header.frame_id = 'lidar'
-            imu_msg.header.stamp.sec = int(timestamp // 1e6)
-            imu_msg.header.stamp.nanosec = int(timestamp % 1e6 )
+            imu_msg.header.frame_id = self.frame
+            # imu_msg.header.stamp.sec = int(timestamp // 1e6)
+            # imu_msg.header.stamp.nanosec = int(timestamp % 1e6 )
+            imu_msg.header.stamp = timestamp
 
             imu_msg.orientation.x = values[7]
             imu_msg.orientation.y = values[8]
@@ -236,14 +246,14 @@ class LidarDriver(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_publisher = LidarDriver()
+    node = LidarDriver()
 
     try:
-        rclpy.spin(minimal_publisher)
+        rclpy.spin(node)
     except KeyboardInterrupt:
         print("Shutting down!")
 
-    minimal_publisher.destroy_node()
+    node.destroy_node()
     rclpy.shutdown()
 
 

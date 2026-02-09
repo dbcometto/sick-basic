@@ -1,0 +1,7 @@
+# lidar_driver:
+/**:
+  ros__parameters:
+    imu_topic: "/imu" 
+    frame: "lidar_base"
+    child_frame: "lidar_sensor"
+    

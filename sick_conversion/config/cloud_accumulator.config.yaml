@@ -1,0 +1,7 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    cloud_input_topic: "/cloud"
+    accum_cloud_topic: "/accum_cloud"
+    buffer_time: 20.0 
+

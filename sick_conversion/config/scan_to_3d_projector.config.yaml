@@ -1,0 +1,6 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    scan_topic: "/scan"
+    cloud_topic: "/cloud" 
+    target_frame: "lidar_base"

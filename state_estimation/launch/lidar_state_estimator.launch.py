@@ -18,21 +18,21 @@ def generate_launch_description():
     # ld.add_action(follower_list_la)
 
 
-    params_file = "lidar_driver.config.yaml"
+    params_file = "lidar_state_estimator.config.yaml"
     params = os.path.join(
-        get_package_share_directory('sick_driver'),
+        get_package_share_directory('state_estimation'),
         "config",
         params_file)
         
-    driver_node = Node(
-            package="sick_driver",
-            executable="lidar_driver",
-            name="lidar_driver",
+    node = Node(
+            package="state_estimation",
+            executable="lidar_state_estimator",
+            name="lidar_state_estimator",
             output="screen",
             parameters=[
                 params
             ],)
-    ld.add_action(driver_node)
+    ld.add_action(node)
 
 
     return ld
