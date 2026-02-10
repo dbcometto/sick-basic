@@ -1,2 +1,2 @@
 # sick-basic
-Git Repo for getting Jackal ready for jackal-sick.
+Git Repo for the RIVeR Lab's SICK Competition project
