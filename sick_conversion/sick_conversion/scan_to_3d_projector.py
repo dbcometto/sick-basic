@@ -8,6 +8,7 @@ from laser_geometry import LaserProjection
 
 import tf2_ros
 import tf2_sensor_msgs.tf2_sensor_msgs as tf2_sensor_msgs
+from collections import deque
 
 import numpy as np
 
@@ -42,7 +43,25 @@ class ScanToCloud(Node):
         )
 
         tf2_buffer_size = (
-            self.declare_parameter("tf2_buffer_size",1.0)
+            self.declare_parameter("tf2_buffer_size",0.0)
+            .get_parameter_value()
+            .double_value
+        )
+
+        process_period = (
+            self.declare_parameter("process_period",0.0)
+            .get_parameter_value()
+            .double_value
+        )
+
+        self.max_scan_queue_size = (
+            self.declare_parameter("max_scan_queue_size",1)
+            .get_parameter_value()
+            .integer_value
+        )
+
+        self.max_scan_queue_time = (
+            self.declare_parameter("max_scan_queue_time",0.0)
             .get_parameter_value()
             .double_value
         )
@@ -60,9 +79,15 @@ class ScanToCloud(Node):
         # Establish subscriber
         self.scan_subscriber = self.create_subscription(LaserScan, scan_topic, self.scan_callback, 10)
 
+        # Establish timer
+        self.process_timer = self.create_timer(process_period,self.process_callback)
+
         # TF2 set up
         self.tf_buffer = tf2_ros.Buffer(cache_time=Duration(seconds=tf2_buffer_size))
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
+
+        # Queue setup
+        self.scan_queue = deque()
 
         # Create projector
         self.projector = LaserProjection()
@@ -76,58 +101,90 @@ class ScanToCloud(Node):
 
 
     def scan_callback(self,msg:LaserScan):
+        if len(self.scan_queue) >= self.max_scan_queue_size:
+            self.scan_queue.popleft()
+
+        self.scan_queue.append(msg)
+
+
+        # try:
+        #     latest_tf = self.tf_buffer.lookup_transform(
+        #                     self.target_frame,    # target
+        #                     msg.header.frame_id,    # source
+        #                     Time(nanoseconds=0),  # zero or default = latest available
+        #                     timeout=Duration(seconds=0.1)
+        #     )
+        #     self.get_logger().info(f"Latest is {latest_tf.header.stamp} versus {msg.header.stamp} ")
+        # except Exception as e:
+        #     self.get_logger().warn(f"Failed: {e} ")
+
+
+
+    def process_callback(self):
+        now = self.get_clock().now()
+
+        while self.scan_queue:
+            msg = self.scan_queue[0]
+            msg_time = Time.from_msg(msg.header.stamp)
+
+            if now - msg_time > Duration(seconds=self.max_scan_queue_time):
+                self.scan_queue.popleft()
+
+            else:
+                try:
+                    tf = self.tf_buffer.lookup_transform(
+                        self.target_frame,          # target
+                        source_frame=msg.header.frame_id,      # source
+                        time=msg_time,     # zero or default = latest available
+                        timeout=Duration(seconds=0.001)
+                    )
+                except Exception as e:
+                    # self.get_logger().warn(f"Exception looking up transform: {e}")
+                    break
+
+                self.scan_queue.popleft()
+                self.process_scan(msg,tf)
+
+
+
+
+    def process_scan(self,msg:LaserScan,tf:tf2_ros.TransformStamped):
         try:
-            latest_tf = self.tf_buffer.lookup_transform(
-                            self.target_frame,    # target
-                            msg.header.frame_id,    # source
-                            Time(nanoseconds=0),  # zero or default = latest available
-                            timeout=Duration(seconds=0.1)
+            # start = self.get_clock().now()
+            cloud = self.projector.projectLaser(msg)
+            # end = self.get_clock().now()
+
+            # self.get_logger().info(f"Projection took {end.nanoseconds - start.nanoseconds}ns")
+
+
+
+            # if self.tf_buffer.can_transform(
+            #     self.target_frame,
+            #     cloud.header.frame_id,
+            #     cloud.header.stamp,
+            #     timeout=rclpy.duration.Duration(seconds=2)
+            #     ):
+
+            cloud_tf = tf2_sensor_msgs.do_transform_cloud(
+                cloud,
+                tf
             )
-            self.get_logger().info(f"Latest is {latest_tf.header.stamp} versus {msg.header.stamp} ")
+
+            # Publish
+            # self.get_logger().info(f"{out_msg}")
+            self.cloud_publisher.publish(cloud_tf)
+
+    #         else:
+    #             latest_tf = self.tf_buffer.lookup_transform(
+    #                 self.target_frame,    # target
+    #                 cloud.header.frame_id,    # source
+    #                 self.get_clock().now(),  # zero or default = latest available
+    #                 timeout=Duration(seconds=0.1)
+    # )
+    #             self.get_logger().warn(f"Discarding scan at time {msg.header.stamp}, no TF available, latest is {latest_tf.header.stamp} ")
+
         except Exception as e:
-            self.get_logger().warn(f"Failed: {e} ")
-
-    #     try:
-    #         start = self.get_clock().now()
-    #         cloud = self.projector.projectLaser(msg)
-    #         end = self.get_clock().now()
-
-    #         self.get_logger().info(f"Projection took {end.nanoseconds - start.nanoseconds}ns")
-
-
-
-    #         # if self.tf_buffer.can_transform(
-    #         #     self.target_frame,
-    #         #     cloud.header.frame_id,
-    #         #     cloud.header.stamp,
-    #         #     timeout=rclpy.duration.Duration(seconds=2)
-    #         #     ):
-
-    #         cloud_tf = tf2_sensor_msgs.do_transform_cloud(
-    #             cloud,
-    #             self.tf_buffer.lookup_transform(
-    #                 self.target_frame,                 # target
-    #                 cloud.header.frame_id,             # source
-    #                 Time(nanoseconds=0), #cloud.header.stamp, # TODO: Fix the timing issue
-    #                 timeout=rclpy.duration.Duration(seconds=0.1) # TODO: fix the timing issue
-    #             )
-    #         )
-
-    #         # Publish
-    #         # self.get_logger().info(f"{out_msg}")
-    #         self.cloud_publisher.publish(cloud_tf)
-
-    # #         else:
-    # #             latest_tf = self.tf_buffer.lookup_transform(
-    # #                 self.target_frame,    # target
-    # #                 cloud.header.frame_id,    # source
-    # #                 self.get_clock().now(),  # zero or default = latest available
-    # #                 timeout=Duration(seconds=0.1)
-    # # )
-    # #             self.get_logger().warn(f"Discarding scan at time {msg.header.stamp}, no TF available, latest is {latest_tf.header.stamp} ")
-
-    #     except Exception as e:
-    #         self.get_logger().warn(f"Projection/TF Failed: {e}")
+            self.get_logger().warn(f"Process scan dailed: {e}")
 
 
 
