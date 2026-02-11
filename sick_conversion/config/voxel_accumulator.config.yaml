@@ -1,0 +1,8 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    cloud_input_topic: "/cloud"
+    voxel_map_topic: "/voxel_map"
+    timer_period: 3.0
+    voxel_resolution: 0.01
+

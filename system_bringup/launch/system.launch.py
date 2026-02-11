@@ -116,6 +116,20 @@ def generate_launch_description():
     )
     ld.add_action(cloud_accumulator_launch)
 
+    # Voxel Accumulation
+    voxel_accumulator_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("sick_conversion"),
+                    "launch",
+                    "voxel_accumulator.launch.py",
+                ]
+            )
+        )
+    )
+    ld.add_action(voxel_accumulator_launch)
+
 
 
     return ld

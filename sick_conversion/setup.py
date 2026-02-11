@@ -29,6 +29,7 @@ setup(
             'scan_to_cloud_converter = sick_conversion.scan_to_cloud_converter:main',
             'scan_to_3d_projector = sick_conversion.scan_to_3d_projector:main',
             'cloud_accumulator = sick_conversion.cloud_accumulator:main',
+            'voxel_accumulator = sick_conversion.voxel_accumulator:main',
         ],
     },
 )

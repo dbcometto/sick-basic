@@ -66,6 +66,8 @@ class CloudAccumulator(Node):
             time_now = self.get_clock().now().nanoseconds * 1e-9
             points = np.array(list(point_cloud2.read_points(msg,field_names=("x","y","z","intensity"), skip_nans=True)))
 
+            # self.get_logger().info(f"shape {points.shape}, data: {points}")
+
             # Add to and update buffer
             self.buffer.append((time_now,points))
             while self.buffer and (time_now - self.buffer[0][0] > self.buffer_time):
