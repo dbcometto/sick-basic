@@ -5,6 +5,8 @@ from sensor_msgs_py import point_cloud2
 from std_msgs.msg import Header
 
 import numpy as np
+import random
+import math
 from collections import deque
 
 
@@ -12,6 +14,7 @@ class Voxel():
     def __init__(self,p):
         self.count = 1
         self.centroid = p # p = (x,y,z,intensity)
+        self.freecount = 0
         
 
     def update(self,p):
@@ -19,14 +22,43 @@ class Voxel():
         for i,v in enumerate(p):
             self.centroid[i] = self.centroid[i] + 1/self.count*(p[i]-self.centroid[i])
 
+    def free_update(self,ratio=None):
+        self.freecount += 1
+
+        if ratio:
+            return self.should_delete(ratio)
+
+    def should_delete(self,ratio):
+        return True if self.freecount > ratio*self.count else False
+
     def as_tuple(self):
         return self.centroid
 
 
+
+
 class VoxelMap():
-    def __init__(self,resolution=1.0):
+    def __init__(self,resolution=1.0,percent_clearance=1.0,cleanup_ratio=3.0,seed=None):
         self.resolution = resolution
+        self.percent_clearance = percent_clearance
+        self.cleanup_ratio = cleanup_ratio
+
+        if seed:
+            random.seed(seed)
+
         self.map = {}
+
+    def update_map_with_point(self,p,origin=(0,0,0,0)):
+        # First handle clearing
+        if random.random() <= self.percent_clearance:
+            for k in self.trace_ray(p,origin):
+                if self.map[k].free_update(self.cleanup_ratio): # returns flag about whether voxel should be deleted
+                    self.delete_voxel(k)
+
+        # Then add
+        self.insert_point(p)
+
+
 
     def insert_point(self,p):
         key = self.get_key(p)
@@ -45,6 +77,111 @@ class VoxelMap():
     def as_points(self):
         return [v.as_tuple() for v in self.map.values()]
     
+
+    def delete_voxel(self,key):
+        del self.map[key]
+
+
+    def trace_ray(self,p,origin,epsilon=1e-20):
+        # Setup
+        x0 = [origin[0],origin[1],origin[2]]
+        x1 = [p[0],p[1],p[2]]
+
+        # Start and end keys
+        key0 = self.get_key(origin)
+        key1 = self.get_key(p)
+
+        # Direction & time between grids & starting time of next grid
+        delta = [0,0,0]
+        step = [0,0,0]
+        tDelta = [0,0,0]
+        tNext = [0,0,0]
+        for axis in range(3):
+            delta[axis] = x1[axis]-x0[axis]
+            step[axis] = 1 if delta[axis] > 0 else -1
+            tDelta[axis] = self.resolution/abs(delta[axis])
+            if tDelta[axis]==0:
+                tDelta[axis] = 1e-20
+
+            if step[axis] > 0:
+                next_grid = (key0[axis]+1)*self.resolution # Forward to next voxel
+            else:
+                next_grid = (key0[axis])*self.resolution # Backwards to same voxel
+
+            tNext[axis] = (next_grid - x0[axis]) / delta[axis] 
+
+            
+
+        # Make list of visited voxels
+        keylist = []
+        key = key0
+        while not key==key1:
+            # print(f"{type(key)} - {key} | {type(key1)} - {key1}")
+            if key in self.map:
+                keylist.append(key)     # Appends before stepping to ensure we don't append the last key
+            
+            # Find next grid crossing
+            axis = 0
+            if tNext[1] < tNext[axis]:
+                axis = 1
+            if tNext[2] < tNext[axis]:
+                axis = 2
+
+            # update to that voxel
+            if axis == 0:
+                key = (key[0] + step[0], key[1], key[2])
+            elif axis == 1:
+                key = (key[0], key[1] + step[1], key[2])
+            else:
+                key = (key[0], key[1], key[2] + step[2])
+
+            # Update next collisions
+            tNext[axis] += tDelta[axis]
+
+
+        
+        return keylist
+    
+
+
+    # def trace_ray(self,p,origin):  # Old vectorized clean version
+    #     # Setup
+    #     x0 = np.array([origin[0],origin[1],origin[2]])
+    #     x1 = np.array([p[0],p[1],p[2]])
+
+    #     # Start and end keys
+    #     key0 = self.get_key(origin)
+    #     key1 = self.get_key(p)
+
+    #     # Direction
+    #     delta = x1-x0
+    #     delta = np.where(delta==0,1e-20,delta)
+    #     step = np.sign(delta).astype(int)
+
+    #     # Time between gridpoints
+    #     tDelta = self.resolution/np.abs(delta)
+
+    #     # Time of next grid intersection
+    #     tNext = np.zeros((3,1))
+    #     for axis in range(3):
+    #         if step[axis] > 0:
+    #             next_grid = (key0[axis]+1)*self.resolution # Forward to next voxel
+    #         else:
+    #             next_grid = (key0[axis])*self.resolution # Backwards to same voxel
+
+    #         tNext[axis] = (next_grid - x0[axis]) / delta[axis] 
+
+    #     # Make list of visited voxels
+    #     keylist = []
+    #     key = [key0[0],key0[1],key0[2]]
+    #     last_key = list(key1)
+    #     while not key==last_key:
+    #         keylist.append(tuple(key))     # Appends before stepping to ensure we don't append the last key
+    #         axis = np.argmin(tNext)
+    #         key[axis] += step[axis]
+    #         tNext[axis] += tDelta[axis]
+        
+    #     return keylist
 
 
 
@@ -83,6 +220,18 @@ class VoxelAccumulator(Node):
             .double_value
         )
 
+        percent_clearance = (
+            self.declare_parameter("percent_clearance",0.0)
+            .get_parameter_value()
+            .double_value
+        )
+
+        cleanup_ratio = (
+            self.declare_parameter("cleanup_ratio",0.0)
+            .get_parameter_value()
+            .double_value
+        )
+
 
         
 
@@ -100,7 +249,7 @@ class VoxelAccumulator(Node):
 
         # Set up
         # self.buffer = deque()
-        self.voxelmap = VoxelMap(voxel_resolution)
+        self.voxelmap = VoxelMap(voxel_resolution,percent_clearance,cleanup_ratio)
         self.frame = None
 
         self.fields = [
@@ -127,19 +276,11 @@ class VoxelAccumulator(Node):
             points = list(point_cloud2.read_points(msg,field_names=("x","y","z","intensity"), skip_nans=True))
             # self.get_logger().info(f"shape {points.shape}, data: {points}")
 
-            # Add to and update buffer
-            # self.buffer.append((time_now,points))
-            # while self.buffer and (time_now - self.buffer[0][0] > self.buffer_time):
-            #     self.buffer.popleft()
-            # 
-            # # Flatten buffer
-            # accum_points = []
-            # for _,ps in self.buffer:
-            #     accum_points.extend(ps)
+
 
             # start = self.get_clock().now()
             for p in points:
-                self.voxelmap.insert_point(p)
+                self.voxelmap.update_map_with_point(p)
             # end = self.get_clock().now()
             # self.get_logger().info(f"Voxel map insertion took {end.nanoseconds - start.nanoseconds}ns")
 

@@ -3,6 +3,7 @@
   ros__parameters:
     cloud_input_topic: "/cloud"
     voxel_map_topic: "/voxel_map"
-    timer_period: 3.0
-    voxel_resolution: 0.01
-
+    timer_period: 1.5
+    voxel_resolution: 0.02
+    percent_clearance: 0.2
+    cleanup_ratio: 5.0
