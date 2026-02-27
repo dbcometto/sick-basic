@@ -1,0 +1,1 @@
+This python package came from the DynamixelSDK git repo, found at https://github.com/ROBOTIS-GIT/DynamixelSDK.

@@ -1,0 +1,12 @@
+.venv
+
+# Python Stuff
+*.egg-info/
+*__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*dist/
+*build/
+*.egg
+*.whl
