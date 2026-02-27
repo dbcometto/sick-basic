@@ -1,3 +1,0 @@
--e git+https://github.com/dbcometto/sick-basic.git@9fe5a43eafec766c804cee24f6287cdb32d65eb6#egg=dynamixel_sdk&subdirectory=DynamixelSDK
-numpy==2.2.6
-pyserial==3.5

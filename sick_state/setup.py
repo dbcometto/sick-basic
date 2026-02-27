@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'sick_motors'
+package_name = 'sick_state'
 
 setup(
     name=package_name,
@@ -15,18 +15,18 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
-    install_requires=['setuptools','pyserial'],
+    install_requires=['setuptools'],
     extras_require={
         'test': ['pytest', 'mock']  # Testing dependencies
     },
     zip_safe=True,
     maintainer='Ben Cometto',
     maintainer_email='benjamin@cometto.org',
-    description='Listens to the SICK PicoScan 150 Lidar and publishes the data on a ROS topic',
+    description='Estimates the state',
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'dynr_driver = sick_motors.nodes.dyn_driver:main',
+            'lidar_state_estimator = sick_state.lidar_state_estimator:main',
         ],
     },
 )
