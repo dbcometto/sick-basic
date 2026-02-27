@@ -26,7 +26,8 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
-            'dynr_driver = sick_motors.nodes.dyn_driver:main',
+            'dyn_driver = sick_motors.nodes.dyn_driver:main',
+            'dyn_angulizer = sick_motors.nodes.dyn_angulizer:main',
         ],
     },
 )

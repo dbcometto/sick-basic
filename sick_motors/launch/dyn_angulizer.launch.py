@@ -18,7 +18,7 @@ def generate_launch_description():
     # ld.add_action(follower_list_la)
 
 
-    params_file = "dyn_driver.config.yaml"
+    params_file = "dyn_angulizer.config.yaml"
     params = os.path.join(
         get_package_share_directory('sick_motors'),
         "config",
@@ -26,8 +26,8 @@ def generate_launch_description():
         
     driver_node = Node(
             package="sick_motors",
-            executable="dyn_driver",
-            name="dyn_driver",
+            executable="dyn_angulizer",
+            name="dyn_angulizer",
             output="screen",
             parameters=[
                 params

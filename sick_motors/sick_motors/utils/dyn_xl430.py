@@ -1,7 +1,9 @@
 from enum import IntEnum
-
+from numpy import pi
 
 class XL430W250T():
+
+    ANGLE_PER_POSITION = 2*pi/4096
 
     class ADDRESS(IntEnum):
         # ===== EEPROM AREA =====
