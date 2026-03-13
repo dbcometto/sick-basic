@@ -15,6 +15,7 @@ set(msg_files
   "msg/MotorAngleRead.msg"
   "msg/MotorPositionCommand.msg"
   "msg/MotorPositionRead.msg"
+  "msg/SweeperModeCommand.msg"
 )
 set(srv_files
 )

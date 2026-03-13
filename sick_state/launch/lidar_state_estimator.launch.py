@@ -20,7 +20,7 @@ def generate_launch_description():
 
     params_file = "lidar_state_estimator.config.yaml"
     params = os.path.join(
-        get_package_share_directory('state_estimation'),
+        get_package_share_directory('sick_state'),
         "config",
         params_file)
         

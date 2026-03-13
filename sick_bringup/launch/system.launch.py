@@ -37,98 +37,37 @@ def generate_launch_description():
 
     #=========================# Sub Launches #=========================#
 
-    # Static TF Transforms
-    static_tf_launch = IncludeLaunchDescription(
+
+
+    # Scanning
+    scanning_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
                 [
-                    FindPackageShare("system_bringup"),
+                    FindPackageShare("sick_bringup"),
                     "launch",
-                    "static_tf.launch.py",
+                    "scan_system.launch.py",
                 ]
             )
         )
     )
-    ld.add_action(static_tf_launch)
+    ld.add_action(scanning_launch)
 
 
 
-    # Lidar Driver
-    driver_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("sick_driver"),
-                    "launch",
-                    "lidar_driver.launch.py",
-                ]
-            )
-        )
-    )
-    ld.add_action(driver_launch)
-
-
-
-
-
-    # Lidar State Estimator
-    lidar_state_estimator_launch = IncludeLaunchDescription(
+    # Sweeper Control
+    sweeper_launch = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 PathJoinSubstitution(
                     [
-                        FindPackageShare("sick_state"),
+                        FindPackageShare("sick_bringup"),
                         "launch",
-                        "lidar_state_estimator.launch.py",
+                        "sweeper_system.launch.py",
                     ]
                 )
             )
         )
-    ld.add_action(lidar_state_estimator_launch)
-
-
-
-    # Scan to Cloud
-    scan_to_3d_projector_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("sick_conversion"),
-                    "launch",
-                    "scan_to_3d_projector.launch.py",
-                ]
-            )
-        )
-    )
-    ld.add_action(scan_to_3d_projector_launch)
-
-
-    # Cloud Accumulation
-    cloud_accumulator_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("sick_conversion"),
-                    "launch",
-                    "cloud_accumulator.launch.py",
-                ]
-            )
-        )
-    )
-    ld.add_action(cloud_accumulator_launch)
-
-    # Voxel Accumulation
-    voxel_accumulator_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("sick_conversion"),
-                    "launch",
-                    "voxel_accumulator.launch.py",
-                ]
-            )
-        )
-    )
-    ld.add_action(voxel_accumulator_launch)
+    ld.add_action(sweeper_launch)
 
 
 

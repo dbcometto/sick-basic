@@ -4,6 +4,8 @@
     # Command
     command_topic: "/dyn_command"
     read_topic: "/dyn_read"
+    toggle_topic: "/sweeper_toggle"
+    starting_mode: "sweep"   # center or sweep
     control_period: 0.04
     max_delta: 0.1
 
@@ -17,9 +19,9 @@
 
     # Pitch
     pitch_motor_id: 2
-    pitch_center_int: 2041
+    pitch_center_int: 1950
     pitch_sweep_time: 17.0
-    pitch_amplitude: 0.6
+    pitch_amplitude: 0.5
     pitch_min: -0.78
     pitch_max: 0.78
     

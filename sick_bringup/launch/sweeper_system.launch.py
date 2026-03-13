@@ -84,6 +84,20 @@ def generate_launch_description():
     )
     ld.add_action(sweeper_launch)
 
+    # Old Sweeper
+    # sweeper_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         PathJoinSubstitution(
+    #             [
+    #                 FindPackageShare("sick_trajectory"),
+    #                 "launch",
+    #                 "blind_sweeper.launch.py",
+    #             ]
+    #         )
+    #     )
+    # )
+    # ld.add_action(sweeper_launch)
+
 
 
     return ld
