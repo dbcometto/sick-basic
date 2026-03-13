@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'blind_sweeper = sick_trajectory.blind_sweeper:main',
+            'liss_sweeper = sick_trajectory.liss_sweeper:main',
         ],
     },
 )

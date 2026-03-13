@@ -1,0 +1,25 @@
+# lidar_driver:
+/**:
+  ros__parameters:
+    # Command
+    command_topic: "/dyn_command"
+    read_topic: "/dyn_read"
+    control_period: 0.04
+    max_delta: 0.1
+
+    # Yaw
+    yaw_motor_id: 1
+    yaw_center_int: 2009
+    yaw_sweep_time: 30.0
+    yaw_amplitude: 2.6
+    yaw_min: -3.14
+    yaw_max: 3.14
+
+    # Pitch
+    pitch_motor_id: 2
+    pitch_center_int: 2041
+    pitch_sweep_time: 17.0
+    pitch_amplitude: 0.6
+    pitch_min: -0.78
+    pitch_max: 0.78
+    
