@@ -3,11 +3,14 @@
   ros__parameters:
     command_topic: "/dyn_command"
     control_period: 0.04
-    motor_ids: [1,2]
-    yaw_sweep_period: 6.0
-    pitch_sweep_period: 3.0
+    yaw_motor_id: 1
+    yaw_center_int: 2009
+    yaw_sweep_period: 12.0
     yaw_min: -3.14
     yaw_max: 3.14
+    pitch_motor_id: 2
+    pitch_center_int: 2041
+    pitch_sweep_period: 11.0
     pitch_min: -0.78
     pitch_max: 0.78
     

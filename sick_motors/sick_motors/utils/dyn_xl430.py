@@ -3,7 +3,9 @@ from numpy import pi
 
 class XL430W250T():
 
-    ANGLE_PER_POSITION = 2*pi/4096
+    POSITIONS_PER_REVOLUTION = 4096
+    ANGLE_PER_POSITION = 2*pi/POSITIONS_PER_REVOLUTION
+    
 
     class ADDRESS(IntEnum):
         # ===== EEPROM AREA =====
