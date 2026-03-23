@@ -1,0 +1,15 @@
+# lidar_driver:
+/**:
+  ros__parameters:
+    motor_topic: "/dyn_read" 
+    base_frame: "mount_base"
+
+    yaw_motor_id: 1
+    yaw_start_frame: "yaw_motor_start"
+    yaw_end_frame: "yaw_motor_end"
+
+    pitch_motor_id: 2
+    pitch_start_frame: "pitch_motor_start"
+    pitch_end_frame: "pitch_motor_end"
+    do_flip_pitch: "True"
+    

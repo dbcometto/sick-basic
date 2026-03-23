@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'lidar_state_estimator = sick_state.lidar_state_estimator:main',
+            'mount_state_estimator = sick_state.mount_state_estimator:main',
         ],
     },
 )

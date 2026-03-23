@@ -24,33 +24,85 @@ def generate_launch_description():
     #     "config",
     #     params_file)
         
-    map_transform_node = Node(
+    map = Node(
             package='tf2_ros',
+            namespace='tf',
             executable='static_transform_publisher',
             arguments = ['0', '0', '0', '0', '0', '0', 'world', 'map']
     )
-    ld.add_action(map_transform_node)
+    ld.add_action(map)
     
-    odom_transform_node = Node(
+    odom = Node(
             package='tf2_ros',
+            namespace='tf',
             executable='static_transform_publisher',
             arguments = ['0', '0', '0', '0', '0', '0', 'map', 'odom']
     )
-    ld.add_action(odom_transform_node)
+    ld.add_action(odom)
     
-    base_transform_node = Node(
+    base = Node(
             package='tf2_ros',
+            namespace='tf',
             executable='static_transform_publisher',
             arguments = ['0', '0', '0', '0', '0', '0', 'odom', 'base']
     )
-    ld.add_action(base_transform_node)
+    ld.add_action(base)
     
-    lidar_base_transform_node = Node(
+    mount_base = Node(
             package='tf2_ros',
+            namespace='tf',
             executable='static_transform_publisher',
-            arguments = ['0', '0', '0', '0', '0', '0', 'base', 'lidar_base']
+            arguments = ['0', '0', '0', '0', '0', '0', 'base', 'mount_base']
     )
-    ld.add_action(lidar_base_transform_node)
+    ld.add_action(mount_base)
+
+    yaw_motor_base = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0', '0', '0', '0', 'mount_base', 'yaw_motor_base']
+    )
+    ld.add_action(yaw_motor_base)
+
+    yaw_motor_start = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0.035', '0', '0', '0', 'yaw_motor_base', 'yaw_motor_start']
+    )
+    ld.add_action(yaw_motor_start)
+
+    pitch_motor_base = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0', '0', '0', '0', 'yaw_motor_end', 'pitch_motor_base']
+    )
+    ld.add_action(pitch_motor_base)
+
+    pitch_motor_start = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0.04', '0', '0', '0', 'pitch_motor_base', 'pitch_motor_start']
+    )
+    ld.add_action(pitch_motor_start)
+
+    lidar_base = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0.02', '0', '0', '0', 'pitch_motor_end', 'lidar_base']
+    )
+    ld.add_action(lidar_base)
+
+    lidar_sensor = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['-0.01', '0', '0.07', '0', '0', '0', 'lidar_base', 'lidar_sensor']
+    )
+    ld.add_action(lidar_sensor)
 
 
     return ld

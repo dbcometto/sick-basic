@@ -69,6 +69,20 @@ def generate_launch_description():
         )
     ld.add_action(angulizer_launch)
 
+    # Motor Centerer
+    centerer_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [
+                        FindPackageShare("sick_motors"),
+                        "launch",
+                        "dyn_centerer.launch.py",
+                    ]
+                )
+            )
+        )
+    ld.add_action(centerer_launch)
+
 
     # Sweeper
     sweeper_launch = IncludeLaunchDescription(

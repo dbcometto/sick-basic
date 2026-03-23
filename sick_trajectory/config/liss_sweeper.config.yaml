@@ -11,7 +11,7 @@
 
     # Yaw
     yaw_motor_id: 1
-    yaw_center_int: 2009
+    yaw_center_int: 0 # was 2009
     yaw_sweep_time: 30.0
     yaw_amplitude: 2.6
     yaw_min: -3.14
@@ -19,7 +19,7 @@
 
     # Pitch
     pitch_motor_id: 2
-    pitch_center_int: 1950
+    pitch_center_int: 0 # was 1950
     pitch_sweep_time: 17.0
     pitch_amplitude: 0.5
     pitch_min: -0.78

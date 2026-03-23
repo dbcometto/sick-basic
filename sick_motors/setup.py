@@ -28,6 +28,7 @@ setup(
         'console_scripts': [
             'dyn_driver = sick_motors.nodes.dyn_driver:main',
             'dyn_angulizer = sick_motors.nodes.dyn_angulizer:main',
+            'dyn_centerer = sick_motors.nodes.dyn_centerer:main',
         ],
     },
 )

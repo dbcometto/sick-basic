@@ -15,6 +15,11 @@ import os
 import yaml
 
 
+def load_parameters(param_file):
+    with open(param_file, 'r') as file:
+        return yaml.safe_load(file)
+
+
 def generate_launch_description():
     ld = LaunchDescription()
 
@@ -33,7 +38,12 @@ def generate_launch_description():
     # )
     # ld.add_action(follower_list_la)
 
-
+    params_file = "system.config.yaml"
+    params = os.path.join(
+        get_package_share_directory('sick_bringup'),
+        "config",
+        params_file)
+    system_params = load_parameters(params)
 
     #=========================# Sub Launches #=========================#
 
@@ -71,19 +81,20 @@ def generate_launch_description():
 
 
 
-    # Lidar State Estimator
-    lidar_state_estimator_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                PathJoinSubstitution(
-                    [
-                        FindPackageShare("sick_state"),
-                        "launch",
-                        "lidar_state_estimator.launch.py",
-                    ]
+    # Lidar State Estimator (otherwise use motors in system.launch.py)
+    if system_params.get("estimate_using_motors","False") != "True":
+        lidar_state_estimator_launch = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    PathJoinSubstitution(
+                        [
+                            FindPackageShare("sick_state"),
+                            "launch",
+                            "lidar_state_estimator.launch.py",
+                        ]
+                    )
                 )
             )
-        )
-    ld.add_action(lidar_state_estimator_launch)
+        ld.add_action(lidar_state_estimator_launch)
 
 
 

@@ -1,7 +1,7 @@
 # dyn_angulizer:
 /**:
   ros__parameters:
-    command_topic_in: "/dyn_command"
+    command_topic_in: "/dyn_command_absolute"
     command_topic_out: "/dyn_command_int"
     data_topic_in: "/dyn_read_int"
-    data_topic_out: "/dyn_read" 
+    data_topic_out: "/dyn_read_absolute" 

@@ -15,6 +15,10 @@ import os
 import yaml
 
 
+def load_parameters(param_file):
+    with open(param_file, 'r') as file:
+        return yaml.safe_load(file)
+
 def generate_launch_description():
     ld = LaunchDescription()
 
@@ -33,6 +37,12 @@ def generate_launch_description():
     # )
     # ld.add_action(follower_list_la)
 
+    params_file = "system.config.yaml"
+    params = os.path.join(
+        get_package_share_directory('sick_bringup'),
+        "config",
+        params_file)
+    system_params = load_parameters(params)
 
 
     #=========================# Sub Launches #=========================#
@@ -68,6 +78,21 @@ def generate_launch_description():
             )
         )
     ld.add_action(sweeper_launch)
+
+    # State estimation from motors (otherwise use lidar in scan_system.launch.py)
+    if system_params.get("estimate_using_motors","False") == "True":
+        mount_state_estimator_launch = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    PathJoinSubstitution(
+                        [
+                            FindPackageShare("sick_state"),
+                            "launch",
+                            "mount_state_estimator.launch.py",
+                        ]
+                    )
+                )
+            )
+        ld.add_action(mount_state_estimator_launch)
 
 
 

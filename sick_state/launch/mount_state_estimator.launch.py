@@ -18,7 +18,7 @@ def generate_launch_description():
     # ld.add_action(follower_list_la)
 
 
-    params_file = "lidar_state_estimator.config.yaml"
+    params_file = "mount_state_estimator.config.yaml"
     params = os.path.join(
         get_package_share_directory('sick_state'),
         "config",
@@ -26,20 +26,13 @@ def generate_launch_description():
         
     node = Node(
             package="sick_state",
-            executable="lidar_state_estimator",
-            name="lidar_state_estimator",
+            executable="mount_state_estimator",
+            name="mount_state_estimator",
             output="screen",
             parameters=[
                 params
             ],)
     ld.add_action(node)
-
-    yaw_motor_static_tf = Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            arguments = ['0', '0', '0', '0', '0', '0', 'yaw_motor_start', 'yaw_motor_end']
-    )
-    ld.add_action(yaw_motor_static_tf)
 
 
     return ld

@@ -1,0 +1,9 @@
+# dyn_angulizer:
+/**:
+  ros__parameters:
+    command_topic_in: "/dyn_command"
+    command_topic_out: "/dyn_command_absolute"
+    data_topic_in: "/dyn_read_absolute"
+    data_topic_out: "/dyn_read" 
+    motor_ids: [1, 2]
+    motor_centers: [2009, 1950]
