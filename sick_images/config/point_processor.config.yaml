@@ -1,0 +1,20 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    image_topic: "/image"
+    point_cloud_topic: "/voxel_map"
+    out_topic: "/colored_voxel_map"
+    in_frame: "base"
+    camera_frame: "camera_sensor"
+    process_period: 1.0
+    value_name: "moisture"
+
+    image_encoding: "mono8"
+    image_width: 640
+    image_height: 480
+    fx: 100
+    fy: 100
+    cx: 320
+    cy: 240
+
+    tf2_buffer_size: 3.0

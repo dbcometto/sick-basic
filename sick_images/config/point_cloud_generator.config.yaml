@@ -1,0 +1,15 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    out_topic: "/voxel_map"
+    frame: "base"
+    period: 5.0
+
+    seed: 2025
+    num_points: 1000
+    xmin: -2.0
+    xmax: 5.0
+    ymin: -5.0
+    ymax: 5.0
+    zmin: 0.0
+    zmax: 3.0

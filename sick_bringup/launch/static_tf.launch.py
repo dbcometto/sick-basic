@@ -105,4 +105,23 @@ def generate_launch_description():
     ld.add_action(lidar_sensor)
 
 
+
+
+    camera_base = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0', '0', '0', '0', 'base', 'camera_base']
+    )
+    ld.add_action(camera_base)
+
+    camera_sensor = Node(
+            package='tf2_ros',
+            namespace='tf',
+            executable='static_transform_publisher',
+            arguments = ['0', '0', '0', '-1.57', '0', '-1.57', 'camera_base', 'camera_sensor']
+    )
+    ld.add_action(camera_sensor)
+
+
     return ld

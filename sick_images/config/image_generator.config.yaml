@@ -1,0 +1,9 @@
+# scan_to_cloud_converter:
+/**:
+  ros__parameters:
+    out_topic: "/image"
+    frame: "base"
+    period: 1.0
+
+    image_height: 480
+    image_width: 640
