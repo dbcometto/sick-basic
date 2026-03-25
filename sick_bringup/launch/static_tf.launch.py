@@ -52,7 +52,7 @@ def generate_launch_description():
             package='tf2_ros',
             namespace='tf',
             executable='static_transform_publisher',
-            arguments = ['0', '0', '0', '0', '0', '0', 'base', 'mount_base']
+            arguments = ['-1.5', '-0.35', '1.42', '0', '0', '0', 'base', 'mount_base']
     )
     ld.add_action(mount_base)
 
