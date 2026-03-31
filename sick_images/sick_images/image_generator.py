@@ -24,6 +24,7 @@ class ImageGenerator(Node):
         
         out_topic = (self.declare_parameter("out_topic","/incorrect").get_parameter_value().string_value)
         self.frame = (self.declare_parameter("frame","/incorrect").get_parameter_value().string_value)
+        self.image_mode = (self.declare_parameter("image_mode","incorrect").get_parameter_value().string_value)
         period = (self.declare_parameter("period",0.0).get_parameter_value().double_value)
 
         self.image_height = (self.declare_parameter("image_height",0).get_parameter_value().integer_value)
@@ -48,9 +49,14 @@ class ImageGenerator(Node):
     def image_callback(self):
         image = np.zeros((self.image_height, self.image_width), dtype = np.uint8)
 
-        for i in range(self.image_height):
-            for j in range(self.image_width):
-                image[i,j] = np.floor((1-i/self.image_height)*(1-j/self.image_width)*255)
+        if self.image_mode == "double_gradient":
+            for i in range(self.image_height):
+                for j in range(self.image_width):
+                    image[i,j] = np.floor((1-i/self.image_height)*(1-j/self.image_width)*255)
+
+        else:
+            for i in range(self.image_height):
+                image[i,:] = np.floor((1-i/self.image_height)*255)
 
         header = Header()
         header.frame_id = self.frame

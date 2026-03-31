@@ -44,7 +44,7 @@ def generate_launch_description():
             package='tf2_ros',
             namespace='tf',
             executable='static_transform_publisher',
-            arguments = ['0', '0', '0', '0', '0', '0', 'odom', 'base']
+            arguments = ['0', '0', '0.5', '0', '0', '0', 'odom', 'base']
     )
     ld.add_action(base)
     

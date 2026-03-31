@@ -3,6 +3,7 @@
   ros__parameters:
     out_topic: "/image"
     frame: "base"
+    image_mode: "gradient"
     period: 1.0
 
     image_height: 480

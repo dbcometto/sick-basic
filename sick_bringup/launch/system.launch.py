@@ -95,5 +95,20 @@ def generate_launch_description():
         ld.add_action(mount_state_estimator_launch)
 
 
+    # Image System
+    image_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [
+                        FindPackageShare("sick_bringup"),
+                        "launch",
+                        "image_system.launch.py",
+                    ]
+                )
+            )
+        )
+    ld.add_action(image_launch)
+
+
 
     return ld
