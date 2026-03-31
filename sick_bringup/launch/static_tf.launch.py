@@ -111,7 +111,7 @@ def generate_launch_description():
             package='tf2_ros',
             namespace='tf',
             executable='static_transform_publisher',
-            arguments = ['0', '0', '0', '0', '0', '0', 'base', 'camera_base']
+            arguments = ['-1.4', '0', '1.42', '0', '0', '0', 'base', 'camera_base']
     )
     ld.add_action(camera_base)
 
