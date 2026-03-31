@@ -316,21 +316,25 @@ sensor-msgs==4.9.0
 sensor-msgs-py==4.9.0
 service-identity==18.1.0
 shape-msgs==4.9.0
+sick-bringup==0.0.0
 sick-conversion==0.0.0
 sick-driver==0.0.0
+sick-images==0.0.0
+sick-interface==0.0.0
+sick-motors==0.0.0
+sick-state==0.0.0
+sick-trajectory==0.0.0
 six==1.16.0
 slam-toolbox==2.6.10
 smclib==4.1.2
 snowballstemmer==2.2.0
 soupsieve==2.3.1
 sros2==0.10.7
-state-estimation==0.0.0
 statistics-msgs==1.2.2
 std-msgs==4.9.0
 std-srvs==4.9.0
 stereo-msgs==4.9.0
 sympy==1.9
-system-bringup==0.0.0
 systemd-python==234
 tapsdk @ file:///home/convoy/workspace/pypackages/tap-python-sdk
 teleop-twist-keyboard==2.4.1
